@@ -32,7 +32,7 @@ The following test users have been created in the database:
 
 2. **Open your browser and navigate to:**
    ```
-   http://127.0.0.1:8001/admin
+   http://127.0.0.1:8001
    ```
 
 3. **Login with any of the test users:**
