@@ -50,7 +50,7 @@ class TodosOverview extends Widget implements HasForms, HasActions
                     'title' => $data['title'],
                     'completed' => false,
                 ]);
-                
+
                 $this->dispatch('todo-created');
             });
     }
@@ -59,14 +59,14 @@ class TodosOverview extends Widget implements HasForms, HasActions
     {
         $todo = Todo::where('user_id', auth()->id())->findOrFail($todoId);
         $todo->update(['completed' => !$todo->completed]);
-        
+
         $this->dispatch('todo-updated');
     }
 
     public function deleteTodo($todoId): void
     {
         Todo::where('user_id', auth()->id())->findOrFail($todoId)->delete();
-        
+
         $this->dispatch('todo-deleted');
     }
 
@@ -75,7 +75,7 @@ class TodosOverview extends Widget implements HasForms, HasActions
     public function createSubtask($parentId, $title = null): void
     {
         $title = $title ?? ($this->subtaskTitle[$parentId] ?? '');
-        
+
         if (empty($title)) {
             return;
         }
@@ -86,10 +86,10 @@ class TodosOverview extends Widget implements HasForms, HasActions
             'parent_id' => $parentId,
             'completed' => false,
         ]);
-        
+
         // Clear the input
         $this->subtaskTitle[$parentId] = '';
-        
+
         $this->dispatch('subtask-created');
     }
 
@@ -97,14 +97,14 @@ class TodosOverview extends Widget implements HasForms, HasActions
     {
         $subtask = Todo::where('user_id', auth()->id())->findOrFail($subtaskId);
         $subtask->update(['completed' => !$subtask->completed]);
-        
+
         $this->dispatch('subtask-updated');
     }
 
     public function deleteSubtask($subtaskId): void
     {
         Todo::where('user_id', auth()->id())->findOrFail($subtaskId)->delete();
-        
+
         $this->dispatch('subtask-deleted');
     }
 
@@ -149,7 +149,7 @@ class TodosOverview extends Widget implements HasForms, HasActions
 
             // Check if AI was actually used or fallback was used
             $isAiAvailable = $ollamaService->isAvailable();
-            
+
             if ($isAiAvailable) {
                 Notification::make()
                     ->title('AI Subtasks Generated')

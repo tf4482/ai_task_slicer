@@ -60,7 +60,7 @@
                                     </button>
                                 </div>
                             </div>
-                            
+
                             @if($todo->description)
                                 <p class="text-sm text-gray-600 dark:text-gray-400 mb-3 {{ $todo->completed ? 'line-through' : '' }}">
                                     {{ $todo->description }}
@@ -77,7 +77,7 @@
                                         @foreach($todo->subtasks as $subtask)
                                             <div class="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 rounded text-sm {{ $subtask->completed ? 'opacity-75' : '' }}">
                                                 <div class="flex items-center space-x-2 flex-1">
-                                                    <button 
+                                                    <button
                                                         wire:click="toggleSubtask({{ $subtask->id }})"
                                                         class="flex-shrink-0"
                                                     >
@@ -95,7 +95,7 @@
                                                         {{ $subtask->title }}
                                                     </span>
                                                 </div>
-                                                <button 
+                                                <button
                                                     wire:click="deleteSubtask({{ $subtask->id }})"
                                                     wire:confirm="Are you sure you want to delete this subtask?"
                                                     class="flex-shrink-0 p-1 rounded hover:bg-red-100 dark:hover:bg-red-900 transition-colors"
@@ -131,7 +131,7 @@
                                         </svg>
                                     </button>
                                 </div>
-                                
+
                                 <!-- AI Generate Subtasks Button -->
                                 <button
                                     wire:click="generateSubtasks({{ $todo->id }})"
@@ -144,7 +144,7 @@
                                     <span>✨ Generate subtasks with AI</span>
                                 </button>
                             </div>
-                            
+
                             <!-- Status and Date -->
                             <div class="flex items-center justify-between text-xs text-gray-500">
                                 <span class="flex items-center">
