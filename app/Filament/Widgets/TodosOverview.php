@@ -24,7 +24,11 @@ class TodosOverview extends Widget implements HasForms, HasActions
 
     public function getTodos()
     {
-        return auth()->user()->todos()->orderBy('created_at', 'desc')->get();
+        return auth()->user()->todos()
+            ->whereNull('parent_id') // Only show main tasks
+            ->with('subtasks') // Eager load subtasks
+            ->orderBy('created_at', 'desc')
+            ->get();
     }
 
     public function createAction(): Action
@@ -62,5 +66,43 @@ class TodosOverview extends Widget implements HasForms, HasActions
         Todo::where('user_id', auth()->id())->findOrFail($todoId)->delete();
         
         $this->dispatch('todo-deleted');
+    }
+
+    public $subtaskTitle = [];
+
+    public function createSubtask($parentId, $title = null): void
+    {
+        $title = $title ?? ($this->subtaskTitle[$parentId] ?? '');
+        
+        if (empty($title)) {
+            return;
+        }
+
+        Todo::create([
+            'user_id' => auth()->id(),
+            'title' => $title,
+            'parent_id' => $parentId,
+            'completed' => false,
+        ]);
+        
+        // Clear the input
+        $this->subtaskTitle[$parentId] = '';
+        
+        $this->dispatch('subtask-created');
+    }
+
+    public function toggleSubtask($subtaskId): void
+    {
+        $subtask = Todo::where('user_id', auth()->id())->findOrFail($subtaskId);
+        $subtask->update(['completed' => !$subtask->completed]);
+        
+        $this->dispatch('subtask-updated');
+    }
+
+    public function deleteSubtask($subtaskId): void
+    {
+        Todo::where('user_id', auth()->id())->findOrFail($subtaskId)->delete();
+        
+        $this->dispatch('subtask-deleted');
     }
 }
