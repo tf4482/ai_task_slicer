@@ -37,15 +37,11 @@ class TodosOverview extends Widget implements HasForms, HasActions
                     ->required()
                     ->maxLength(255)
                     ->placeholder('Enter todo title...'),
-                Textarea::make('description')
-                    ->rows(3)
-                    ->placeholder('Enter description (optional)...'),
             ])
             ->action(function (array $data): void {
                 Todo::create([
                     'user_id' => auth()->id(),
                     'title' => $data['title'],
-                    'description' => $data['description'] ?? null,
                     'completed' => false,
                 ]);
                 

@@ -28,8 +28,6 @@ class TodoResource extends Resource
                 Forms\Components\TextInput::make('title')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Textarea::make('description')
-                    ->rows(3),
                 Forms\Components\Toggle::make('completed')
                     ->default(false),
                 Forms\Components\Hidden::make('user_id')
