@@ -35,4 +35,12 @@ return [
         ],
     ],
 
+    'ollama' => [
+        'url' => env('OLLAMA_URL', 'http://192.168.1.11:11434'),
+        'timeout' => env('OLLAMA_TIMEOUT', 30),
+        'default_model' => env('OLLAMA_DEFAULT_MODEL', 'gemma3:4b'),
+        'token_limit' => env('OLLAMA_TOKEN_LIMIT', 12800),
+        'response_tokens' => env('OLLAMA_RESPONSE_TOKENS', 1000),
+    ],
+
 ];
