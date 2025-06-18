@@ -118,7 +118,7 @@ public function canAccessPanel(Panel $panel): bool
 {
     // Example: Only allow users with admin role
     // return $this->role === 'admin';
-    
+
     // Current: Allow all authenticated users
     return true;
 }

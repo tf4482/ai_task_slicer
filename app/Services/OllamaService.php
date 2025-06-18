@@ -24,7 +24,7 @@ class OllamaService
         try {
             // Use default model if none specified
             $model = $model ?? config('services.ollama.default_model', 'llama2');
-            
+
             $response = Http::timeout($this->timeout)
                 ->post("{$this->baseUrl}/api/generate", [
                     'model' => $model,
@@ -81,7 +81,7 @@ Now generate {$count} specific subtasks for: '{$mainTask}'";
 
         // Try with different models if available
         $models = $this->getAvailableModels();
-        
+
         foreach ($models as $model) {
             $response = $this->generate($prompt, $model);
             if ($response) {
@@ -125,7 +125,7 @@ Now generate {$count} specific subtasks for: '{$mainTask}'";
     private function getAvailableModels(): array
     {
         $models = $this->getModels();
-        
+
         // If no models found, try common model names in order of preference
         if (empty($models)) {
             return [
@@ -140,7 +140,7 @@ Now generate {$count} specific subtasks for: '{$mainTask}'";
                 'phi'
             ];
         }
-        
+
         // Prioritize the configured default model if it exists
         $defaultModel = config('services.ollama.default_model', 'llama3.2');
         if (in_array($defaultModel, $models)) {
@@ -148,7 +148,7 @@ Now generate {$count} specific subtasks for: '{$mainTask}'";
             $models = array_diff($models, [$defaultModel]);
             array_unshift($models, $defaultModel);
         }
-        
+
         return $models;
     }
 
@@ -175,7 +175,7 @@ Return only the improved task description without any additional explanation:";
 
         // Try with different models if available
         $models = $this->getAvailableModels();
-        
+
         foreach ($models as $model) {
             $response = $this->generate($prompt, $model);
             if ($response) {
@@ -206,7 +206,7 @@ Return only the improved task description without any additional explanation:";
     {
         try {
             $response = Http::timeout(10)->get("{$this->baseUrl}/api/tags");
-            
+
             if ($response->successful()) {
                 $data = $response->json();
                 return collect($data['models'] ?? [])

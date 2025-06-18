@@ -47,7 +47,7 @@ class TestOllama extends Command
         // Get available models
         $this->info('Fetching available models...');
         $models = $ollamaService->getModels();
-        
+
         if (empty($models)) {
             $this->warn('⚠️  No models found or unable to fetch models');
         } else {
@@ -62,9 +62,9 @@ class TestOllama extends Command
         if ($prompt) {
             $this->info('Testing text generation...');
             $this->info('Prompt: ' . $prompt);
-            
+
             $response = $ollamaService->generate($prompt);
-            
+
             if ($response) {
                 $this->info('✅ Generation successful!');
                 $this->info('Response:');
@@ -78,7 +78,7 @@ class TestOllama extends Command
         $this->info('Testing subtask generation...');
         $testTask = 'Plan a birthday party';
         $subtasks = $ollamaService->generateSubtasks($testTask, 3);
-        
+
         if (!empty($subtasks)) {
             $this->info("✅ Subtask generation successful for: '{$testTask}'");
             $this->info('Generated subtasks:');
