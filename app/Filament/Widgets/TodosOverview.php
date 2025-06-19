@@ -36,13 +36,14 @@ class TodosOverview extends Widget implements HasForms, HasActions
     public function createAction(): Action
     {
         return Action::make('create')
-            ->label('Add New Todo')
+            ->label(__('app.add_new_todo'))
             ->icon('heroicon-m-plus')
             ->form([
                 TextInput::make('title')
+                    ->label(__('app.title'))
                     ->required()
                     ->maxLength(255)
-                    ->placeholder('Enter todo title...'),
+                    ->placeholder(__('app.enter_todo_title')),
             ])
             ->action(function (array $data): void {
                 Todo::create([
@@ -115,8 +116,8 @@ class TodosOverview extends Widget implements HasForms, HasActions
 
         if (!$ollamaService->isAvailable()) {
             Notification::make()
-                ->title('AI Service Unavailable')
-                ->body('The AI service is currently unavailable. Please try again later.')
+                ->title(__('app.ai_service_unavailable'))
+                ->body(__('app.ai_service_unavailable_message'))
                 ->danger()
                 ->send();
             return;
@@ -127,8 +128,8 @@ class TodosOverview extends Widget implements HasForms, HasActions
 
             if (empty($subtasks)) {
                 Notification::make()
-                    ->title('No Subtasks Generated')
-                    ->body('Could not generate subtasks for this task. Please try a different task or add subtasks manually.')
+                    ->title(__('app.no_subtasks_generated'))
+                    ->body(__('app.no_subtasks_generated_message'))
                     ->warning()
                     ->send();
                 return;
@@ -151,8 +152,8 @@ class TodosOverview extends Widget implements HasForms, HasActions
 
         } catch (\Exception $e) {
             Notification::make()
-                ->title('Generation Failed')
-                ->body('Failed to generate subtasks. Please try again or add them manually.')
+                ->title(__('app.generation_failed'))
+                ->body(__('app.generation_failed_message'))
                 ->danger()
                 ->send();
         }
@@ -165,8 +166,8 @@ class TodosOverview extends Widget implements HasForms, HasActions
 
         if (!$ollamaService->isAvailable()) {
             Notification::make()
-                ->title('AI Service Unavailable')
-                ->body('The AI service is currently unavailable. Please try again later.')
+                ->title(__('app.ai_service_unavailable'))
+                ->body(__('app.ai_service_unavailable_message'))
                 ->danger()
                 ->send();
             return;
@@ -179,24 +180,24 @@ class TodosOverview extends Widget implements HasForms, HasActions
                 $todo->update(['title' => trim($improvedTitle)]);
 
                 Notification::make()
-                    ->title('Task Improved')
-                    ->body('The task has been improved using AI.')
+                    ->title(__('app.task_improved'))
+                    ->body(__('app.task_improved_message'))
                     ->success()
                     ->send();
 
                 $this->dispatch('task-improved');
             } else {
                 Notification::make()
-                    ->title('No Improvement Needed')
-                    ->body('The AI found no improvements needed for this task.')
+                    ->title(__('app.no_improvement_needed'))
+                    ->body(__('app.no_improvement_needed_message'))
                     ->info()
                     ->send();
             }
 
         } catch (\Exception $e) {
             Notification::make()
-                ->title('AI Improvement Failed')
-                ->body('Failed to improve the task. Please try again.')
+                ->title(__('app.ai_improvement_failed'))
+                ->body(__('app.ai_improvement_failed_message'))
                 ->danger()
                 ->send();
         }
