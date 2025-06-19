@@ -13,7 +13,7 @@ class OllamaService
 
     public function __construct()
     {
-        $this->baseUrl = config('services.ollama.url', 'http://192.168.1.12:8000');
+        $this->baseUrl = config('services.ollama.url');
         $this->timeout = config('services.ollama.timeout', 30);
     }
 
@@ -24,7 +24,7 @@ class OllamaService
     {
         try {
             // Use default model if none specified
-            $model = $model ?? config('services.ollama.default_model', 'llama2');
+            $model = $model ?? config('services.ollama.default_model');
 
             $response = Http::timeout($this->timeout)
                 ->post("{$this->baseUrl}/api/generate", [
@@ -70,28 +70,25 @@ class OllamaService
 
         $prompt = "{$languageInstruction}
 
-Given the main task: '{$mainTask}', generate {$count} HIGHLY SPECIFIC and ACTIONABLE subtasks with concrete details, numbers, timeframes, and exact steps. Each subtask should be detailed enough that someone could immediately start working on it without needing clarification. Include specific quantities, timeframes, tools, or methods where relevant. Return only the subtasks as a numbered list, one per line, without any additional explanation.
+Task: {$mainTask}
 
-Examples of GOOD specific subtasks:
-- 'Research 5 car models under \$25,000 on Edmunds.com and Consumer Reports'
-- 'Visit 3 dealerships this weekend and test drive Honda Civic, Toyota Corolla, and Nissan Sentra'
-- 'Get insurance quotes from State Farm, Geico, and Progressive for chosen car model'
+Generate {$count} specific and actionable subtasks. Each subtask should be detailed and include concrete steps, numbers, or timeframes where relevant.
 
-Examples of BAD generic subtasks to avoid:
-- 'Research cars'
-- 'Visit dealerships'
-- 'Get insurance'
+IMPORTANT: Do not include any thinking process, explanations, or <think> tags. Return only a numbered list, one subtask per line.
 
-Now generate {$count} specific subtasks for: '{$mainTask}'";
+Example:
+1. Research 5 car models under \$25,000 on automotive websites
+2. Visit 3 local dealerships this weekend for test drives
+3. Get insurance quotes from 3 different companies
 
-        // Try with different models if available
-        $models = $this->getAvailableModels();
+Now generate {$count} subtasks for: {$mainTask}";
 
-        foreach ($models as $model) {
-            $response = $this->generate($prompt, $model);
-            if ($response) {
-                return $this->parseSubtasks($response, $count);
-            }
+        // Use the default model directly
+        $model = config('services.ollama.default_model');
+        $response = $this->generate($prompt, $model);
+        
+        if ($response) {
+            return $this->parseSubtasks($response, $count);
         }
 
         // If AI generation fails, return empty array or basic message
@@ -104,12 +101,21 @@ Now generate {$count} specific subtasks for: '{$mainTask}'";
      */
     private function parseSubtasks(string $response, int $count): array
     {
+        // Remove thinking tags and content
+        $response = preg_replace('/<think>.*?<\/think>/s', '', $response);
+        $response = preg_replace('/<think>.*$/s', '', $response);
+        
         $lines = explode("\n", trim($response));
         $subtasks = [];
 
         foreach ($lines as $line) {
             $line = trim($line);
             if (empty($line)) continue;
+
+            // Skip lines that look like thinking process
+            if (strpos($line, '<think>') !== false || strpos($line, '</think>') !== false) {
+                continue;
+            }
 
             // Remove numbering (1., 2., -, etc.)
             $line = preg_replace('/^\d+\.\s*/', '', $line);
@@ -134,20 +140,12 @@ Now generate {$count} specific subtasks for: '{$mainTask}'";
         // If no models found, try common model names in order of preference
         if (empty($models)) {
             return [
-                config('services.ollama.default_model', 'llama3.2'),
-                'llama3.2',
-                'llama3.1',
-                'llama3',
-                'llama2',
-                'mistral',
-                'codellama',
-                'phi3',
-                'phi'
+                config('services.ollama.default_model')
             ];
         }
 
         // Prioritize the configured default model if it exists
-        $defaultModel = config('services.ollama.default_model', 'llama3.2');
+        $defaultModel = config('services.ollama.default_model');
         if (in_array($defaultModel, $models)) {
             // Move default model to the front
             $models = array_diff($models, [$defaultModel]);
@@ -184,17 +182,11 @@ Examples of proper enhancements (keeping original task intact):
 
 Return only the enhanced task description that starts with the original task, without any additional explanation:";
 
-        // Try with different models if available
-        $models = $this->getAvailableModels();
-
-        foreach ($models as $model) {
-            $response = $this->generate($prompt, $model);
-            if ($response) {
-                return $response;
-            }
-        }
-
-        return null;
+        // Use the default model directly
+        $model = config('services.ollama.default_model');
+        $response = $this->generate($prompt, $model);
+        
+        return $response;
     }
 
     /**
