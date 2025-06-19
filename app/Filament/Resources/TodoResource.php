@@ -19,16 +19,23 @@ class TodoResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-check-circle';
 
-    protected static ?string $navigationLabel = 'Todos';
+    protected static ?string $navigationLabel = null;
+
+    public static function getNavigationLabel(): string
+    {
+        return __('app.todos');
+    }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('title')
+                    ->label(__('app.title'))
                     ->required()
                     ->maxLength(255),
                 Forms\Components\Toggle::make('completed')
+                    ->label(__('app.completed'))
                     ->default(false),
                 Forms\Components\Hidden::make('user_id')
                     ->default(auth()->id()),
@@ -40,9 +47,11 @@ class TodoResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')
+                    ->label(__('app.title'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('description')
+                    ->label(__('app.description'))
                     ->limit(50)
                     ->tooltip(function (Tables\Columns\TextColumn $column): ?string {
                         $state = $column->getState();
@@ -52,23 +61,26 @@ class TodoResource extends Resource
                         return $state;
                     }),
                 Tables\Columns\IconColumn::make('completed')
+                    ->label(__('app.completed'))
                     ->boolean()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('app.created_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('app.updated_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('completed')
-                    ->label('Status')
-                    ->placeholder('All todos')
-                    ->trueLabel('Completed')
-                    ->falseLabel('Pending'),
+                    ->label(__('app.status'))
+                    ->placeholder(__('app.all_todos'))
+                    ->trueLabel(__('app.completed'))
+                    ->falseLabel(__('app.pending')),
             ])
             ->actions([
                 Tables\Actions\Action::make('toggle')
