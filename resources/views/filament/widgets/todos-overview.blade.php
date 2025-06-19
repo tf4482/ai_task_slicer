@@ -1,7 +1,7 @@
 <x-filament-widgets::widget>
     <x-filament::section>
         <x-slot name="heading">
-            My Todo List
+            {{ __('app.my_todo_list') }}
         </x-slot>
 
         <x-slot name="headerEnd">
@@ -12,7 +12,7 @@
             @if($this->getTodos()->isEmpty())
                 <div class="text-center py-8">
                     <div class="text-gray-400 text-lg mb-2">📝</div>
-                    <p class="text-gray-500">No todos yet. Create your first todo!</p>
+                    <p class="text-gray-500">{{ __('app.no_todos_yet') }}</p>
                 </div>
             @else
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -27,7 +27,7 @@
                                     <button
                                         wire:click="improveTask({{ $todo->id }})"
                                         class="p-1 rounded-full hover:bg-purple-100 dark:hover:bg-purple-900 transition-colors"
-                                        title="Improve task with AI"
+                                        title="{{ __('app.improve_task_ai') }}"
                                     >
                                         <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
@@ -36,7 +36,7 @@
                                     <button
                                         wire:click="toggleTodo({{ $todo->id }})"
                                         class="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                                        title="{{ $todo->completed ? 'Mark as pending' : 'Mark as completed' }}"
+                                        title="{{ $todo->completed ? __('app.mark_as_pending') : __('app.mark_as_completed') }}"
                                     >
                                         @if($todo->completed)
                                             <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
@@ -50,9 +50,9 @@
                                     </button>
                                     <button
                                         wire:click="deleteTodo({{ $todo->id }})"
-                                        wire:confirm="Are you sure you want to delete this todo and all its subtasks?"
+                                        wire:confirm="{{ __('app.delete_confirmation') }}"
                                         class="p-1 rounded-full hover:bg-red-100 dark:hover:bg-red-900 transition-colors"
-                                        title="Delete todo"
+                                        title="{{ __('app.delete_todo') }}"
                                     >
                                         <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
@@ -71,7 +71,7 @@
                             @if($todo->subtasks->count() > 0)
                                 <div class="mt-3 mb-3">
                                     <h4 class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wide">
-                                        Subtasks ({{ $todo->subtasks->where('completed', true)->count() }}/{{ $todo->subtasks->count() }})
+                                        {{ __('app.subtasks') }} ({{ $todo->subtasks->where('completed', true)->count() }}/{{ $todo->subtasks->count() }})
                                     </h4>
                                     <div class="space-y-1">
                                         @foreach($todo->subtasks as $subtask)
@@ -97,9 +97,9 @@
                                                 </div>
                                                 <button
                                                     wire:click="deleteSubtask({{ $subtask->id }})"
-                                                    wire:confirm="Are you sure you want to delete this subtask?"
+                                                    wire:confirm="{{ __('app.delete_subtask_confirmation') }}"
                                                     class="flex-shrink-0 p-1 rounded hover:bg-red-100 dark:hover:bg-red-900 transition-colors"
-                                                    title="Delete subtask"
+                                                    title="{{ __('app.delete_subtask') }}"
                                                 >
                                                     <svg class="w-3 h-3 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
@@ -119,12 +119,12 @@
                                         wire:model="subtaskTitle.{{ $todo->id }}"
                                         wire:keydown.enter="createSubtask({{ $todo->id }})"
                                         class="flex-1 text-xs rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                        placeholder="Add subtask..."
+                                        placeholder="{{ __('app.add_subtask') }}"
                                     >
                                     <button
                                         wire:click="createSubtask({{ $todo->id }})"
                                         class="px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-                                        title="Add subtask"
+                                        title="{{ __('app.add_subtask') }}"
                                     >
                                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
@@ -136,12 +136,12 @@
                                 <button
                                     wire:click="generateSubtasks({{ $todo->id }})"
                                     class="w-full text-left text-xs text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 flex items-center justify-center space-x-1 p-2 rounded border border-purple-300 dark:border-purple-600 hover:border-purple-400 dark:hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors"
-                                    title="Generate subtasks using AI"
+                                    title="{{ __('app.generate_subtasks_ai') }}"
                                 >
                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
                                     </svg>
-                                    <span>✨ Generate subtasks with AI</span>
+                                    <span>{{ __('app.generate_subtasks_ai') }}</span>
                                 </button>
                             </div>
 
@@ -150,11 +150,11 @@
                                 <span class="flex items-center">
                                     @if($todo->completed)
                                         <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                                            ✓ Completed
+                                            ✓ {{ __('app.completed') }}
                                         </span>
                                     @else
                                         <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
-                                            ⏳ Pending
+                                            ⏳ {{ __('app.pending') }}
                                         </span>
                                     @endif
                                 </span>
