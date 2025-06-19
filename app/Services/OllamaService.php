@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\App;
 
 class OllamaService
 {
@@ -65,7 +66,11 @@ class OllamaService
      */
     public function generateSubtasks(string $mainTask, int $count = 5): array
     {
-        $prompt = "Given the main task: '{$mainTask}', generate {$count} HIGHLY SPECIFIC and ACTIONABLE subtasks with concrete details, numbers, timeframes, and exact steps. Each subtask should be detailed enough that someone could immediately start working on it without needing clarification. Include specific quantities, timeframes, tools, or methods where relevant. Return only the subtasks as a numbered list, one per line, without any additional explanation.
+        $languageInstruction = $this->getLanguageInstruction();
+
+        $prompt = "{$languageInstruction}
+
+Given the main task: '{$mainTask}', generate {$count} HIGHLY SPECIFIC and ACTIONABLE subtasks with concrete details, numbers, timeframes, and exact steps. Each subtask should be detailed enough that someone could immediately start working on it without needing clarification. Include specific quantities, timeframes, tools, or methods where relevant. Return only the subtasks as a numbered list, one per line, without any additional explanation.
 
 Examples of GOOD specific subtasks:
 - 'Research 5 car models under \$25,000 on Edmunds.com and Consumer Reports'
@@ -157,21 +162,27 @@ Now generate {$count} specific subtasks for: '{$mainTask}'";
      */
     public function improveTask(string $task): ?string
     {
-        $prompt = "Transform this vague task into a HIGHLY SPECIFIC and ACTIONABLE task with concrete details, numbers, timeframes, and clear success criteria: '{$task}'.
+        $languageInstruction = $this->getLanguageInstruction();
 
-Make it specific by adding:
-- Exact quantities, numbers, or amounts
+        $prompt = "{$languageInstruction}
+
+IMPORTANT: Keep the original task '{$task}' as the main focus. DO NOT change the core task or replace it with something different. Only add specific details, timeframes, and methods to make it more actionable while preserving the original intent.
+
+Add specific details to this task: '{$task}'
+
+Enhance it by adding:
 - Specific timeframes or deadlines
-- Concrete tools, methods, or locations
-- Clear success criteria or deliverables
-- Specific people, companies, or resources involved
+- Concrete methods, tools, or approaches
+- Measurable quantities or targets
+- Clear success criteria
+- Specific resources or locations
 
-Examples of improvements:
-- 'Buy a car' → 'Research and purchase a reliable used sedan under \$20,000 from local dealerships within 3 weeks'
-- 'Exercise more' → 'Go to gym 3 times per week for 45-minute workouts focusing on cardio and strength training'
-- 'Learn programming' → 'Complete Python fundamentals course on Codecademy and build 2 small projects within 8 weeks'
+Examples of proper enhancements (keeping original task intact):
+- 'Buy a car' → 'Buy a car: Research 5 reliable models under \$25,000, visit 3 dealerships, and complete purchase within 4 weeks'
+- 'Exercise more' → 'Exercise more: Go to gym 3 times per week for 45-minute sessions focusing on cardio and strength training'
+- 'Learn programming' → 'Learn programming: Complete Python fundamentals course on Codecademy and build 2 practice projects within 8 weeks'
 
-Return only the improved task description without any additional explanation:";
+Return only the enhanced task description that starts with the original task, without any additional explanation:";
 
         // Try with different models if available
         $models = $this->getAvailableModels();
@@ -221,6 +232,22 @@ Return only the improved task description without any additional explanation:";
             ]);
 
             return [];
+        }
+    }
+
+    /**
+     * Get language instruction for AI prompts based on current locale
+     */
+    private function getLanguageInstruction(): string
+    {
+        $locale = App::getLocale();
+
+        switch ($locale) {
+            case 'de':
+                return "WICHTIG: Antworte ausschließlich auf Deutsch. Alle Aufgaben, Unteraufgaben und Verbesserungen müssen in deutscher Sprache formuliert werden. Verändere niemals die ursprüngliche Aufgabe, sondern erweitere sie nur mit spezifischen Details.";
+            case 'en':
+            default:
+                return "IMPORTANT: Respond exclusively in English. All tasks, subtasks, and improvements must be formulated in English. Never change the original task, only enhance it with specific details.";
         }
     }
 }
