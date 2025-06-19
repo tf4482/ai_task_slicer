@@ -147,23 +147,6 @@ class TodosOverview extends Widget implements HasForms, HasActions
                 }
             }
 
-            // Check if AI was actually used or fallback was used
-            $isAiAvailable = $ollamaService->isAvailable();
-
-            if ($isAiAvailable) {
-                Notification::make()
-                    ->title('AI Subtasks Generated')
-                    ->body("Successfully created {$createdCount} AI-powered subtasks.")
-                    ->success()
-                    ->send();
-            } else {
-                Notification::make()
-                    ->title('Smart Subtasks Generated')
-                    ->body("Created {$createdCount} suggested subtasks. (AI service unavailable - using smart fallbacks)")
-                    ->info()
-                    ->send();
-            }
-
             $this->dispatch('subtasks-generated');
 
         } catch (\Exception $e) {
