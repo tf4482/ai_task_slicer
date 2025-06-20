@@ -91,7 +91,7 @@
                                                             </svg>
                                                         @endif
                                                     </button>
-                                                    <span class="{{ $subtask->completed ? 'line-through text-gray-500' : 'text-gray-700 dark:text-gray-300' }}">
+                                                    <span class="{{ $subtask->completed ? 'line-through text-gray-500 dark:text-white-500' : 'text-white-700 dark:text-white-100' }}">
                                                         {{ $subtask->title }}
                                                     </span>
                                                 </div>
