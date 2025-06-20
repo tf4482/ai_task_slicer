@@ -20,6 +20,8 @@ class TodoResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-check-circle';
 
     protected static ?string $navigationLabel = null;
+    
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function getNavigationLabel(): string
     {
