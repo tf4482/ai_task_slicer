@@ -86,7 +86,7 @@ Now generate {$count} subtasks for: {$mainTask}";
         // Use the default model directly
         $model = config('services.ollama.default_model');
         $response = $this->generate($prompt, $model);
-        
+
         if ($response) {
             return $this->parseSubtasks($response, $count);
         }
@@ -104,7 +104,7 @@ Now generate {$count} subtasks for: {$mainTask}";
         // Remove thinking tags and content
         $response = preg_replace('/<think>.*?<\/think>/s', '', $response);
         $response = preg_replace('/<think>.*$/s', '', $response);
-        
+
         $lines = explode("\n", trim($response));
         $subtasks = [];
 
@@ -185,7 +185,7 @@ Return only the enhanced task description that starts with the original task, wi
         // Use the default model directly
         $model = config('services.ollama.default_model');
         $response = $this->generate($prompt, $model);
-        
+
         return $response;
     }
 
